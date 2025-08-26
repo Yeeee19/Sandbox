@@ -1,7 +1,7 @@
 spring:
     datasource:
         driver-class-name: org.sqlite.JDBC
-        url: jdbc:sqlite:jpa.db
+        url: jdbc:sqlite:sqlite.db
 
     jpa:
         database-platform: org.hibernate.community.dialect.SQLiteDialect
