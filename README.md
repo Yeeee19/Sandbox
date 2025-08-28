@@ -6,7 +6,7 @@ docker-compose down
 
 ---------------------------------------------------
 
-API 說明
+Polling API 說明
 1. triggerInsertTestData
     - 說明: 間隔 5 - 10 秒插入 1 筆資料, 直至插入 100000 筆測試資料到資料庫, 或收到停止訊號
     - 方法: POST
@@ -42,3 +42,26 @@ API 說明
             "message": "系統維護完成"
          }
        ]
+
+---------------------------------------------------
+
+Long Polling API 說明
+
+
+
+
+
+回傳 CompletableFuture 與 DeferredResult 比較
+
+|  特性   | `CompletableFuture`  | `DeferredResult` |
+|  ----  | :----:  | :---: |
+| 層級  | Java 原生 | Spring 特有 |
+| 回傳控制  | 自動完成後返回 | 手動呼叫 `setResult()` |
+| 彈性  | 一般 | 更高（支援 timeout、error 等） |
+| 簡潔度  | 高 | 需要多些代碼 |
+| 適合場景  | 簡單非同步操作 | 複雜流程、事件驅動 |
+
+
+如果你需要更強的非同步/反應式支持，甚至可以考慮：
+WebFlux + Mono/Flux（反應式編程，非阻塞）
+Callable 或 WebAsyncTask（也是 Spring MVC 的 async 支援）
