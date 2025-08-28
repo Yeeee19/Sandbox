@@ -1,8 +1,31 @@
-啟動方式
-docker-compose up -d
+純後端執行方式
 
-關閉方式
-docker-compose down
+    僅執行後端
+    docker run -d -p 8080:8080 --name my-app-container my-app
+    
+    暫停後端
+    docker stop my-app-container
+    
+    恢復後端
+    docker start my-app-container
+    
+    關閉並刪除後端
+    docker rm my-app-container
+
+---------------------------------------------------
+前後端合併執行方式
+
+    啟動前+後端
+    docker-compose up -d
+    
+    暫停前+後端
+    docker-compose stop
+    
+    恢復前+後端
+    docker-compose start
+    
+    關閉並刪除前+後端
+    docker-compose down
 
 ---------------------------------------------------
 
