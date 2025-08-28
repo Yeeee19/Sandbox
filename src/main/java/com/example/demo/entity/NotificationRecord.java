@@ -15,4 +15,7 @@ public class NotificationRecord {
     @Id
     @Column(name = "TIMESTAMP")
     private Long timestamp;
+
+    @Column(name = "MESSAGE")
+    private String message;
 }
