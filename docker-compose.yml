@@ -1,6 +1,23 @@
 version: '3.8'
 services:
-  java-app:
-    build: .
+  notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - appnet
+
+  realtime:
+    build:
+      context: ../realtime-communication-demo
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
