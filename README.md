@@ -1,5 +1,8 @@
 純後端執行方式
 
+    建立映像檔 (當後端程式更新時, 關閉並刪除既有容器, 執行新的映像檔)
+    docker build -t my-app .
+
     僅執行後端
     docker run -d -p 8080:8080 --name my-app-container my-app
     
@@ -67,6 +70,10 @@ Polling API 說明
        ]
 
 ---------------------------------------------------
+
+[x] 監控
+[x] logger
+
 
 Long Polling API 說明
 
