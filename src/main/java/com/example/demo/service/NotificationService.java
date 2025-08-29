@@ -41,7 +41,6 @@ public class NotificationService {
         this.notificationRecordRepository = notificationRecordRepository;
     }
 
-    @Async
     public void triggerInsertTestData() {
         Random random = new Random();
 
