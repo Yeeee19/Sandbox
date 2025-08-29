@@ -40,12 +40,14 @@ Polling API 說明
     - 參數: 無
     - 範例回傳: "開始插入測試資料。"
 
+
 2. stopInsertTestData
     - 說明: 停止插入測試資料
     - 方法: POST
     - 範例: http://localhost:8080/stopInsertTestData
     - 參數: 無
     - 範例回傳: "停止插入測試資料的請求已發出。"
+
 
 2. notificationsAfter
    - 說明: 取得指定時間之後的通知
@@ -71,7 +73,6 @@ Polling API 說明
 
 ---------------------------------------------------
 
-[x] 監控
 [x] logger
 
 
@@ -95,3 +96,11 @@ Long Polling API 說明
 如果你需要更強的非同步/反應式支持，甚至可以考慮：
 WebFlux + Mono/Flux（反應式編程，非阻塞）
 Callable 或 WebAsyncTask（也是 Spring MVC 的 async 支援）
+
+---------------------------------------------------
+
+系統監控網址 (spring-boot-actuator + spring-boot-admin)
+
+http://localhost:8080/
+
+可考慮 grafana + prometheus 做更進階的監控
