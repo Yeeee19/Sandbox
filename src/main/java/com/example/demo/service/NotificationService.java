@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.entity.NotificationRecord;
 import com.example.demo.repository.NotificationRecordRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,8 @@ public class NotificationService {
             "備份系統檢查完成",
     };
 
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
+
     public NotificationService(NotificationRecordRepository notificationRecordRepository) {
         this.notificationRecordRepository = notificationRecordRepository;
     }
@@ -43,7 +47,7 @@ public class NotificationService {
 
         for (int i = 0; i < 100000; i++) {
             if (!insertTestDataRunning) {
-                System.out.println("插入測試資料程序已停止。");
+                logger.info("插入測試資料的程序已停止。");
                 break;
             }
 
