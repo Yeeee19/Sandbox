@@ -5,10 +5,14 @@ import com.example.demo.repository.NotificationRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class NotificationService {
@@ -62,6 +66,9 @@ public class NotificationService {
             notificationRecord.setTimestamp(System.currentTimeMillis());
             notificationRecord.setMessage(dummyMessages[random.nextInt(dummyMessages.length)]);
             notificationRecordRepository.save(notificationRecord);
+
+            // long-polling 通知
+            notifyNewRecord(notificationRecord);
         }
 
         setInsertTestDataRunningFlag(false);
@@ -85,5 +92,22 @@ public class NotificationService {
         }
 
         return records;
+    }
+
+    private final List<DeferredResult<NotificationRecord>> deferredResults = Collections.synchronizedList(new ArrayList<>());
+
+    public DeferredResult<NotificationRecord> registerDeferredResult() {
+        DeferredResult<NotificationRecord> result = new DeferredResult<>(30 * 1000L);
+        deferredResults.add(result);
+        result.onCompletion(() -> deferredResults.remove(result));
+        result.onTimeout(() -> deferredResults.remove(result));
+        result.onError(throwable -> deferredResults.remove(result));
+        return result;
+    }
+
+    public void notifyNewRecord(NotificationRecord record) {
+        for (DeferredResult<NotificationRecord> result : deferredResults) {
+            result.setResult(record);
+        }
     }
 }

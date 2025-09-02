@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.List;
 
@@ -36,8 +37,13 @@ public class NotificationController {
         return ResponseEntity.ok("停止插入測試資料的請求已發出。");
     }
 
-    @GetMapping("/notificationsAfter")
+    @GetMapping("/polling")
     public ResponseEntity<List<NotificationRecord>> getNotificationsAfter(@RequestParam(value = "timestamp", required = false) Long timestamp) {
         return ResponseEntity.ok(notificationService.getNotificationsAfter(timestamp));
+    }
+
+    @GetMapping("/longPolling")
+    public DeferredResult<NotificationRecord> subscribeLongPolling() {
+        return notificationService.registerDeferredResult();
     }
 }

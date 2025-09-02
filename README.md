@@ -1,4 +1,4 @@
-純後端執行方式
+<h3> 純後端執行方式 </h3>
 
     建立映像檔 (當後端程式更新時, 關閉並刪除既有容器, 執行新的映像檔)
     docker build -t my-app .
@@ -16,7 +16,7 @@
     docker rm my-app-container
 
 ---------------------------------------------------
-前後端合併執行方式
+<h3> 前後端合併執行方式 </h3>
 
     啟動前+後端
     docker-compose up -d
@@ -31,8 +31,7 @@
     docker-compose down
 
 ---------------------------------------------------
-
-Polling API 說明
+<h3> Polling API 說明 </h3>
 1. triggerInsertTestData
     - 說明: 間隔 5 - 10 秒插入 1 筆資料, 直至插入 100000 筆測試資料到資料庫, 或收到停止訊號
     - 方法: POST
@@ -72,35 +71,33 @@ Polling API 說明
        ]
 
 ---------------------------------------------------
-
-[x] logger
-
-
-Long Polling API 說明
+<h3> Long Polling API 說明 </h3>
 
 
+<h3> 各種非同步處理方式比較 </h3>
 
-
-
-回傳 CompletableFuture 與 DeferredResult 比較
-
-|  特性   | `CompletableFuture`  | `DeferredResult` |
-|  ----  | :----:  | :---: |
-| 層級  | Java 原生 | Spring 特有 |
-| 回傳控制  | 自動完成後返回 | 手動呼叫 `setResult()` |
-| 彈性  | 一般 | 更高（支援 timeout、error 等） |
-| 簡潔度  | 高 | 需要多些代碼 |
-| 適合場景  | 簡單非同步操作 | 複雜流程、事件驅動 |
-
-
-如果你需要更強的非同步/反應式支持，甚至可以考慮：
-WebFlux + Mono/Flux（反應式編程，非阻塞）
-Callable 或 WebAsyncTask（也是 Spring MVC 的 async 支援）
+| 特性/方式             | `Callable` | `WebAsyncTask` | `DeferredResult`     | `CompletableFuture`        | `WebFlux (Mono/Flux)`   |
+|:------------------| :----------: | :--------------: | :--------------------: | :--------------------------: | :-----------------------: |
+| 所屬技術棧             | Spring MVC | Spring MVC     | Spring MVC           | Spring MVC                 | **Spring WebFlux**（反應式） |
+| 是否阻塞 Servlet 線程   | ❌ 釋放主線程    | ❌ 釋放主線程        | ❌ 釋放主線程              | ❌ 釋放主線程                    | ✅ 非阻塞                   |
+| 例外處理支持            | ✅          | ✅（支持逾時處理）      | ❌（需自定義）              | ❌（需自定義）                    | ✅（統一處理）                 |
+| 超時處理              | ❌          | ✅              | ✅                    | ✅（結合超時邏輯）                  | ✅（內建機制）                 |
+| 控制靈活性             | ❌ 簡單封裝     | ✅ 可設定逾時/錯誤回調   | ✅ 完全控制回應             | ✅ 更現代、更標準                  | ✅ 高靈活                   |
+| 適用場景              | 簡單異步任務     | 複雜異步任務         | 外部事件觸發（如MQ、callback） | 與 CompletableFuture API 整合 | 高併發、非阻塞場景               |
+| Spring Boot 支援版本  | ✅ MVC 預設支援 | ✅              | ✅                    | ✅（Spring 4+）               | ✅（需使用 WebFlux 模組）       |
 
 ---------------------------------------------------
 
-系統監控網址 (spring-boot-actuator + spring-boot-admin)
+<h3> 系統監控 </h3>
 
-http://localhost:8080/
+spring-boot-actuator + spring-boot-admin
+
+    http://localhost:8080/
+
+
 
 可考慮 grafana + prometheus 做更進階的監控
+
+---------------------------------------------------
+
+arthas
