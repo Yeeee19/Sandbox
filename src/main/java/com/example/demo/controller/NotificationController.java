@@ -22,11 +22,10 @@ public class NotificationController {
     @PostMapping("/triggerInsertTestData")
     public ResponseEntity<String> triggerInsertTestData() {
 
-        if (notificationService.isInsertTestDataRunning()) {
+        if (notificationService.isInsertTestDataRunning() || !notificationService.setInsertTestDataRunningFlag(true)) {
             return ResponseEntity.status(429).body("當前已有測試資料插入程序在執行中，請稍後再試。");
         }
 
-        notificationService.setInsertTestDataRunningFlag(true);
         notificationService.triggerInsertTestData();
         return ResponseEntity.ok("開始插入測試資料。");
     }

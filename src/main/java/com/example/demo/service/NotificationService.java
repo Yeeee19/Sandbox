@@ -4,18 +4,18 @@ import com.example.demo.entity.NotificationRecord;
 import com.example.demo.repository.NotificationRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class NotificationService {
 
     private final NotificationRecordRepository notificationRecordRepository;
 
-    private volatile boolean insertTestDataRunning = false;
+    private final AtomicBoolean insertTestDataRunning = new AtomicBoolean(false);
 
     private final String[] dummyMessages = {
             "新產品上線了！",
@@ -45,7 +45,7 @@ public class NotificationService {
         Random random = new Random();
 
         for (int i = 0; i < 100000; i++) {
-            if (!insertTestDataRunning) {
+            if (!insertTestDataRunning.get()) {
                 logger.info("插入測試資料的程序已停止。");
                 break;
             }
@@ -64,15 +64,15 @@ public class NotificationService {
             notificationRecordRepository.save(notificationRecord);
         }
 
-        insertTestDataRunning = false;
+        setInsertTestDataRunningFlag(false);
     }
 
-    public void setInsertTestDataRunningFlag(boolean running) {
-        this.insertTestDataRunning = running;
+    public boolean setInsertTestDataRunningFlag(boolean running) {
+        return insertTestDataRunning.compareAndSet(!running, running);
     }
 
     public boolean isInsertTestDataRunning() {
-        return insertTestDataRunning;
+        return insertTestDataRunning.get();
     }
 
     public List<NotificationRecord> getNotificationsAfter(Long timestamp) {
