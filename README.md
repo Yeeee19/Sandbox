@@ -31,13 +31,14 @@
     docker-compose down
 
 ---------------------------------------------------
-<h3> Polling API 說明 </h3>
+<h3> 觸發測試資料 API </h3>
+
 1. triggerInsertTestData
     - 說明: 間隔 5 - 10 秒插入 1 筆資料, 直至插入 100000 筆測試資料到資料庫, 或收到停止訊號
     - 方法: POST
     - 範例: http://localhost:8080/triggerInsertTestData
     - 參數: 無
-    - 範例回傳: "開始插入測試資料。"
+    - 範例回傳: "結束插入測試資料。"
 
 
 2. stopInsertTestData
@@ -47,8 +48,10 @@
     - 參數: 無
     - 範例回傳: "停止插入測試資料的請求已發出。"
 
+---------------------------------------------------
+<h3> Polling API </h3>
 
-2. notificationsAfter
+1. polling
    - 說明: 取得指定時間之後的通知
    - 方法: GET
    - 範例: http://localhost:8080/notificationsAfter?timestamp=1756351245390
@@ -71,8 +74,56 @@
        ]
 
 ---------------------------------------------------
-<h3> Long Polling API 說明 </h3>
+<h3> Long Polling API </h3>
 
+1. longPolling
+    - 說明: 異步取得新通知
+    - 方法: GET
+    - 範例: http://localhost:8080/longPolling
+    - 參數: 無
+    - 範例回傳: JSON 陣列, 包含指定時間之後的通知資料
+      - [
+            {
+                "timestamp": 1756351245392,
+                "message": "備份系統檢查完成"
+            },
+            {
+                "timestamp": 1756351245394,
+                "message": "促銷活動開始"
+            },
+            {
+                "timestamp": 1756351245399,
+                "message": "系統維護完成"
+            }
+         ]
+    - 行為:
+      - 若有新通知, 立即回傳包含新通知的 JSON 陣列
+      - 若無新通知, 等待最多 30 秒, 503 狀態碼表示逾時
+
+
+2. longPolling-mono
+    - 說明: 使用 WebFlux 異步取得新通知
+    - 方法: GET
+    - 範例: http://localhost:8080/longPolling/mono
+    - 參數: 無
+    - 範例回傳: JSON 陣列, 包含指定時間之後的通知資料
+      - [
+            {
+                "timestamp": 1756351245392,
+                "message": "備份系統檢查完成"
+            },
+            {
+                "timestamp": 1756351245394,
+                "message": "促銷活動開始"
+            },
+            {
+                "timestamp": 1756351245399,
+                "message": "系統維護完成"
+            }
+         ]
+    - 行為:
+      - 若有新通知, 立即回傳包含新通知的 JSON 陣列
+      - 若無新通知, 等待最多 30 秒, 503 狀態碼表示逾時
 
 <h3> 各種非同步處理方式比較 </h3>
 

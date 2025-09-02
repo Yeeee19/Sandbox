@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -28,7 +30,7 @@ public class NotificationController {
         }
 
         notificationService.triggerInsertTestData();
-        return ResponseEntity.ok("開始插入測試資料。");
+        return ResponseEntity.ok("結束插入測試資料。");
     }
 
     @PostMapping("/stopInsertTestData")
@@ -45,5 +47,15 @@ public class NotificationController {
     @GetMapping("/longPolling")
     public DeferredResult<NotificationRecord> subscribeLongPolling() {
         return notificationService.registerDeferredResult();
+    }
+
+    @GetMapping("/longPolling/mono")
+    public Mono<ResponseEntity<NotificationRecord>> subscribeLongPollingMono() {
+        return notificationService.registerMono()
+                .timeout(Duration.ofSeconds(30))
+                .map(ResponseEntity::ok)
+                .onErrorResume(throwable ->
+                        Mono.just(ResponseEntity.status(503).body(null))
+                );
     }
 }

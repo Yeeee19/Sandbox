@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,8 +69,11 @@ public class NotificationService {
             notificationRecord.setMessage(dummyMessages[random.nextInt(dummyMessages.length)]);
             notificationRecordRepository.save(notificationRecord);
 
-            // long-polling 通知
+            // long polling
             notifyNewRecord(notificationRecord);
+
+            // long polling (WebFlux)
+            monoSink.tryEmitNext(notificationRecord);
         }
 
         setInsertTestDataRunningFlag(false);
@@ -82,6 +87,9 @@ public class NotificationService {
         return insertTestDataRunning.get();
     }
 
+
+
+    // -------- polling --------
     public List<NotificationRecord> getNotificationsAfter(Long timestamp) {
         List<NotificationRecord> records;
 
@@ -93,7 +101,13 @@ public class NotificationService {
 
         return records;
     }
+    // -------- polling --------
 
+
+
+
+
+    // -------- long polling --------
     private final List<DeferredResult<NotificationRecord>> deferredResults = Collections.synchronizedList(new ArrayList<>());
 
     public DeferredResult<NotificationRecord> registerDeferredResult() {
@@ -110,4 +124,16 @@ public class NotificationService {
             result.setResult(record);
         }
     }
+    // -------- long polling --------
+
+
+
+
+    // -------- long polling (WebFlux) --------
+    private final Sinks.Many<NotificationRecord> monoSink = Sinks.many().multicast().onBackpressureBuffer();
+
+    public Mono<NotificationRecord> registerMono() {
+        return monoSink.asFlux().next();
+    }
+    // -------- long polling (WebFlux) --------
 }
