@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.NotificationRecord;
+import com.example.demo.handler.NotificationWebSocketHandler;
 import com.example.demo.repository.NotificationRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,8 @@ public class NotificationService {
 
             // long polling (WebFlux)
             monoSink.tryEmitNext(notificationRecord);
+
+            NotificationWebSocketHandler.broadcast(notificationRecord.getMessage());
         }
 
         setInsertTestDataRunningFlag(false);
@@ -136,4 +139,11 @@ public class NotificationService {
         return monoSink.asFlux().next();
     }
     // -------- long polling (WebFlux) --------
+
+
+
+
+    // -------- websocket --------
+
+    // -------- websocket --------
 }
