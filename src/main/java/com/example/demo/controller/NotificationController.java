@@ -30,7 +30,7 @@ public class NotificationController {
         }
 
         notificationService.triggerInsertTestData();
-        return ResponseEntity.ok("結束插入測試資料。");
+        return ResponseEntity.ok("開始插入測試資料。");
     }
 
     @PostMapping("/stopInsertTestData")

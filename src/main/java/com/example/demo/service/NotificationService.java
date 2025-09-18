@@ -5,6 +5,7 @@ import com.example.demo.handler.NotificationWebSocketHandler;
 import com.example.demo.repository.NotificationRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 import reactor.core.publisher.Mono;
@@ -48,6 +49,7 @@ public class NotificationService {
         this.notificationRecordRepository = notificationRecordRepository;
     }
 
+    @Async
     public void triggerInsertTestData() {
         Random random = new Random();
 
