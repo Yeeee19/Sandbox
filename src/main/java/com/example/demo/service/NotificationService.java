@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
@@ -78,6 +79,9 @@ public class NotificationService {
             // long polling (WebFlux)
             monoSink.tryEmitNext(notificationRecord);
 
+            // sse
+            notifySseEmitters(notificationRecord);
+
             NotificationWebSocketHandler.broadcast(notificationRecord.getMessage());
         }
 
@@ -145,7 +149,25 @@ public class NotificationService {
 
 
 
-    // -------- websocket --------
+    // -------- sse --------
+    private final List<SseEmitter> sseEmitters = new CopyOnWriteArrayList<>();
 
-    // -------- websocket --------
+    public void subscribe(SseEmitter emitter) {
+        sseEmitters.add(emitter);
+        emitter.onCompletion(() -> sseEmitters.remove(emitter));
+        emitter.onTimeout(() -> sseEmitters.remove(emitter));
+        emitter.onError(e -> sseEmitters.remove(emitter));
+    }
+
+    public void notifySseEmitters(NotificationRecord record) {
+        for (SseEmitter emitter : sseEmitters) {
+            try {
+                emitter.send(record);
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+                sseEmitters.remove(emitter);
+            }
+        }
+    }
+    // -------- sse --------
 }

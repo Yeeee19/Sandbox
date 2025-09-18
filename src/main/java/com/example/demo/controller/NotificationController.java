@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -57,5 +58,12 @@ public class NotificationController {
                 .onErrorResume(throwable ->
                         Mono.just(ResponseEntity.status(503).body(null))
                 );
+    }
+
+    @GetMapping("/sse")
+    public SseEmitter streamNotifications() {
+        SseEmitter emitter = new SseEmitter();
+        notificationService.subscribe(emitter);
+        return emitter;
     }
 }

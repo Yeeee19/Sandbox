@@ -138,6 +138,20 @@
 | Spring Boot 支援版本  | ✅ MVC 預設支援 | ✅              | ✅                    | ✅（Spring 4+）               | ✅（需使用 WebFlux 模組）       |
 
 ---------------------------------------------------
+<h3> Server Sent Event API </h3>
+
+1. sse
+    - 說明: 使用 Server-Sent Events (SSE) 取得新通知
+    - 方法: GET
+    - 範例: http://localhost:8080/sse
+    - 參數: 無
+    - 範例回傳: SSE 格式, 包含新通知資料
+      - data: {"timestamp":1756351245392,"message":"備份系統檢查完成"}
+      - data: {"timestamp":1756351245394,"message":"促銷活動開始"}
+   - 行為:
+     - 若有新通知, 立即推送新通知
+
+---------------------------------------------------
 <h3> Web Socket API </h3>
 
 1. webSocket
